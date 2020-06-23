@@ -10,6 +10,11 @@ namespace Catstagram_Server
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
+    using Catstagram_Server.Data.Models;
+    using Microsoft.AspNetCore.Authentication.JwtBearer;
+    using Microsoft.IdentityModel.Tokens;
+    using Catstagram_Server.Infrastructure;
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -20,35 +25,80 @@ namespace Catstagram_Server
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(
+            services.AddDbContext<CatstagramDbContext>(
                 options =>options
-                .UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                .UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection")));
 
                  services
-                    .AddIdentity<IdentityUser,IdentityRole>()
-                    .AddEntityFrameworkStores<ApplicationDbContext>();
-           
-                services.AddControllers();
+                    .AddIdentity<User,IdentityRole>(
+                        options =>
+                        {
+                            options.Password.RequiredLength = 6;
+                            options.Password.RequireDigit = false ;
+                            options.Password.RequireLowercase = false;
+                            options.Password.RequireNonAlphanumeric = false;
+                            options.Password.RequireUppercase = false;
+                        })
+                    .AddEntityFrameworkStores<CatstagramDbContext>();
+
+                    var ApplicationSettingsConfig = this.Configuration.GetSection("ApplicationSettings");
+                    services.Configure<AppSettings>(ApplicationSettingsConfig);
+
+                    var appSettings = ApplicationSettingsConfig.Get<AppSettings>();
+                    var key = System.Text.Encoding.ASCII.GetBytes(appSettings.secret);
+
+            services.AddAuthentication(
+               x =>
+                    {
+                        x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                        x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                    })
+            
+              
+              .AddJwtBearer(
+               x =>
+                    {
+                        x.RequireHttpsMetadata = false;
+                        x.SaveToken = true;
+                        x.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidateIssuerSigningKey = true,
+                            IssuerSigningKey = new SymmetricSecurityKey(key),
+                            ValidateIssuer = false,
+                            ValidateAudience = false
+                        };
+                    });
+
+            services.AddControllers();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+
             if (env.IsDevelopment())
             {
-                app.UseDatabaseErrorPage();
+                app.UseDeveloperExceptionPage();
             }
+
             
-
-
             app.UseRouting();
+
+            app.UseCors(
+                x => x
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+
+
 
             app.UseAuthentication();
             app.UseAuthorization();
-
-            app.UseEndpoints(endpoints => 
-            { 
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(
+            endpoints => 
+                        { 
+                            endpoints.MapControllers();
+                        });
+            app.ApplyMigrations();
         }
     }
 }
