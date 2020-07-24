@@ -6,12 +6,14 @@ namespace Catstagram_Server.Data.Models
     public class Cat
     {
         public int Id { get; set; }
-       [Required]
-       [MaxLength(MaxDescriptionLenght)]
+        
+        
+        [Required]
+        [MaxLength(MaxDescriptionLenght)]
         public string  Description { get; set; }
         [Required]
+        
         public string ImageUrl { get; set; }
-
         [Required]
         public string UserId { get; set; } //FK
 

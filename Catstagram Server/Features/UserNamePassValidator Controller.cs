@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Catstagram_Server.Controllers
+namespace Catstagram_Server.Features
 {
     public class UserNamePassValidator_Controller : Controller
     {

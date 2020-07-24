@@ -1,18 +1,23 @@
 ﻿
 
+using Catstagram_Server.Data.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using System;
+
 namespace Catstagram_Server.Data
 {
-    using Catstagram_Server.Data.Models;
-    using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore;
+   
     public class CatstagramDbContext : IdentityDbContext<User>
     {
         public CatstagramDbContext(DbContextOptions<CatstagramDbContext> options)
             : base(options)
         {
         }
+        public DbSet<Cat> Cats { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
+           
 
             builder
                 .Entity<Cat>()
@@ -23,5 +28,6 @@ namespace Catstagram_Server.Data
 
             base.OnModelCreating(builder);
         }
+       
     }
 }

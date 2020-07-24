@@ -6,7 +6,7 @@ namespace Catstagram_Server.Models.Cats
 {
     public class CreateCatRequestModel
     {
-        [Required]
+      
         [MaxLength(Cat.MaxDescriptionLenght)]
         public string Description { get; set; }
         [Required]
