@@ -16,6 +16,7 @@ namespace Catstagram_Server
     using Catstagram_Server.Infrastructure;
     using Catstagram_Server.Infrastructure.Extensions;
 
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -26,9 +27,7 @@ namespace Catstagram_Server
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<CatstagramDbContext>(
-                options => options
-                .UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDatabase(this.Configuration);
 
             services
                .AddIdentity<User, IdentityRole>(
@@ -71,7 +70,9 @@ namespace Catstagram_Server
                });
 
             services.AddControllers();
+            services.AddSwagger();
             services.AddApplicationServices();
+            
 
         }
 
@@ -83,8 +84,14 @@ namespace Catstagram_Server
                 app.UseDeveloperExceptionPage();
             }
 
+           
+
 
             app.UseRouting();
+            app.SwaggerUI();
+            
+
+
 
             app.UseCors(
                 x => x

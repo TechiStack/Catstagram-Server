@@ -13,17 +13,6 @@ namespace Catstagram_Server.Infrastructure.Extensions
                 configuration
                             .GetConnectionString("DefaultConnection");
 
-        public static AppSettings GetApplicationSettings(
-            this IServiceCollection services,
-            IConfiguration configuration
-            )
-        {
-            var ApplicationSettingsConfig = configuration.GetSection("ApplicationSettings");
-            services.Configure<AppSettings>(ApplicationSettingsConfig);
-            return  ApplicationSettingsConfig.Get<AppSettings>();
-
-
-            
-        }
+    
     }
 }

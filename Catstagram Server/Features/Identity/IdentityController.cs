@@ -36,14 +36,16 @@ namespace Catstagram_Server.Features.Identity
             this.appSettings = appSettings.Value;
             this.identityService = identityService;
         }
+        [HttpGet]
         [Route(nameof(GET))]
         public ActionResult GET()
         {
             return Ok("its working");
         }
 
-
+        [HttpPost]
         [Route(nameof(Register))]
+        
         public async Task<ActionResult> Register(RegisterUserRequestModel model)
         {
             var user = new User { Email = model.Email, UserName = model.UserName};
@@ -54,7 +56,7 @@ namespace Catstagram_Server.Features.Identity
             }
             return BadRequest(result.Errors);
         }
-
+        [HttpPost]
         [Route(nameof(Login))]
         public async Task<ActionResult<LoginResponseModel>> Login(LoginRequestModel model)
         {

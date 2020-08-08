@@ -10,7 +10,7 @@ namespace Catstagram_Server.Features
     [Route("[controller]")]
     public abstract  class ApiController : ControllerBase
     {
-        
+        [HttpGet]
         public ActionResult Index()
         {
             return Ok("");

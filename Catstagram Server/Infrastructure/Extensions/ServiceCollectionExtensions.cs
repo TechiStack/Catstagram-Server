@@ -5,16 +5,40 @@ using Catstagram_Server.Features.Cats;
 using Catstagram_Server.Features.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Runtime.CompilerServices;
+using Microsoft.OpenApi.Models;
+using System;
+using System.Reflection;
+using System.IO;
 
 namespace Catstagram_Server.Infrastructure.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-            
+        public static AppSettings GetApplicationSettings(
+        this IServiceCollection services,
+        IConfiguration configuration
+        )
+        {
+            var ApplicationSettingsConfig = configuration.GetSection("ApplicationSettings");
+            services.Configure<AppSettings>(ApplicationSettingsConfig);
+            return ApplicationSettingsConfig.Get<AppSettings>();
+
+
+
+        }
+        public static IServiceCollection AddDatabase(
+             this IServiceCollection services,
+             IConfiguration configuration
+            )
+        => services
+            .AddDbContext<CatstagramDbContext>( options => options
+                .UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
         public static IServiceCollection AddIdenentity(this IServiceCollection services)
         {
             services
@@ -74,9 +98,18 @@ namespace Catstagram_Server.Infrastructure.Extensions
                 .AddTransient<IIdentityService, IdentityService>()
                 .AddTransient<ICatService, CatServices>();
 
-            
-        
-
-
+        public static IServiceCollection AddSwagger(this IServiceCollection services)
+        {
+            // Register the Swagger generator, defining 1 or more Swagger documents
+           return services.AddSwaggerGen(swagger =>
+            {
+                swagger.SwaggerDoc("v1", new OpenApiInfo { Title = "My Catsgaram API",Version="v1" });
+            });
+        }
     }
+        
+     
+
+
+    
 }

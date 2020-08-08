@@ -9,6 +9,7 @@ namespace Catstagram_Server.Features
    
     public class HomeController : ApiController
     {
+        [HttpGet]
         [Route(nameof(Get))]
         [Authorize]
         public IActionResult Get()
